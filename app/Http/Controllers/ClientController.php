@@ -35,6 +35,12 @@ class ClientController extends Controller
      */
     public function index()
     {
+        //return $this->repository->skipPresenter()->all();
+        /*
+         * sem o skipPresenter() os campos que não foram listados no parâmetro filter
+         * são repassados com valor "null"
+         * e com ele esses campos são omitidos.
+         */
         return $this->repository->all();
     }
 
@@ -80,6 +86,6 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        return $this->repository->delete($id);
+        return ['success' => $this->repository->delete($id)];
     }
 }

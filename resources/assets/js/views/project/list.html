@@ -1,0 +1,43 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Listagem de Projetos
+                    <a class="btn btn-primary pull-right" href="#/projects/new"><i class="fa fa fa-plus"></i></a>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Client</th>
+                                <th>Progress</th>
+                                <th>Status</th>
+                                <th>Due Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr dir-paginate="o in projects | itemsPerPage: pagination.limit" total-items="pagination.total" current-page="pagination.current">
+                                <td>{{ o.name }}</td>
+                                <td>{{ o.client.data.name }}</td>
+                                <td>{{ o.progress }}</td>
+                                <td>{{ o.status }}</td>
+                                <td>{{ o.due_date | dateBr }}</td>
+                                <td>
+                                    <a class="btn btn-default" ng-href="#/projects/{{ o.id }}/files"><i class="fa fa-files-o"></i></a>
+                                    <a class="btn btn-default" ng-href="#/projects/{{ o.id }}/notes"><i class="fa fa-edit"></i></a>
+
+                                    <a class="btn btn-info" ng-href="#/projects/{{ o.id }}/edit"><i class="fa fa-pencil"></i></a>
+                                    <a class="btn btn-danger" ng-href="#/projects/{{ o.id }}/remove"><i class="fa fa-remove"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <dir-pagination-controls on-page-change="pageChanged(newPageNumber)"></dir-pagination-controls>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

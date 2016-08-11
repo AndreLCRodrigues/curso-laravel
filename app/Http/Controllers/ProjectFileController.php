@@ -2,31 +2,32 @@
 
 namespace CodeProject\Http\Controllers;
 
-use CodeProject\Repositories\ProjectRepository;
-use CodeProject\Services\ProjectService;
+use CodeProject\Repositories\ProjectFileRepository;
+use CodeProject\Services\ProjectFileService;
 use Illuminate\Http\Request;
-use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 
 class ProjectFileController extends Controller
 {
     /**
-     * @var ProjectRepository
+     * @var ProjectFileRepository
      */
     private $repository;
     /**
-     * @var ProjectService
+     * @var ProjectFileService
      */
     private $service;
 
     /**
      * ProjectController constructor.
-     * @param ProjectRepository $repository
-     * @param ProjectService $service
+     * @param ProjectFileRepository $repository
+     * @param ProjectFileService $service
      */
-    public function __construct(ProjectRepository $repository, ProjectService $service)
+    public function __construct(ProjectFileRepository $repository, ProjectFileService $service)
     {
         $this->repository = $repository;
         $this->service = $service;
+
+        $this->middleware('check-project-permission');
     }
 
     /**
@@ -34,11 +35,9 @@ class ProjectFileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($projectId)
     {
-        $userId = \Authorizer::getResourceOwnerId();
-
-        return $this->repository->findWhere(['owner_id' => $userId]);
+        return $this->repository->findWhere(['project_id' => $projectId]);
     }
 
     /**
@@ -47,7 +46,7 @@ class ProjectFileController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $projectId)
     {
         $file = $request->file('file');
         $extension = $file->getClientOriginalExtension();
@@ -55,77 +54,79 @@ class ProjectFileController extends Controller
         $data['file'] = $file;
         $data['extension'] = $extension;
         $data['name'] = $request->name;
-        $data['project_id'] = $request->project_id;
+        $data['project_id'] = $projectId;
         $data['description'] = $request->description;
 
-        $this->service->createFile($data);
+        return $this->service->create($data);
+    }
+
+    /**
+     * Download the specified file.
+     *
+     * @param  int  $id
+     * @return Download file
+     */
+    public function showFile($id, $fileId)
+    {
+        if($this->service->checkProjectPermissions($id) == false){
+            return ['error' => 'Access forbidden'];
+        }
+
+        $filePath = $this->service->getFilePath($fileId);
+        $fileContent = file_get_contents($filePath);
+        $file64 = base64_encode($fileContent);
+        return [
+            'file' => $file64,
+            'size' => filesize($filePath),
+            'name' => $this->service->getFileName($fileId)
+        ];
+        //return response()->download($this->service->getFilePath($fileId));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param $projectId
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($projectId, $id)
     {
-        if($this->checkProjectPermissions($id) == false){
+        if($this->service->checkProjectOwner($projectId) == false){
             return ['error' => 'Access forbidden'];
         }
 
-        return $this->repository->find($id);
+        $result = $this->repository->findWhere(['project_id' => $projectId, 'id' => $id]);
+
+        if(isset($result['data']) and count($result['data']) == 1){
+            $result['data'] = $result['data'][0];
+        }
+
+        return $result;
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param $projectId
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $projectId, $id)
     {
-        if($this->checkProjectOwner($id) == false){
-            return ['error' => 'Access forbidden'];
-        }
-
         return $this->service->update($request->all(), $id);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param $projectId
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($projectId, $id)
     {
-        if($this->checkProjectOwner($id) == false){
-            return ['error' => 'Access forbidden'];
-        }
-
-        return $this->repository->delete($id);
-    }
-
-    private function checkProjectOwner($projectId)
-    {
-        $userId = \Authorizer::getResourceOwnerId();
-
-        return $this->repository->isOwner($projectId, $userId);
-    }
-
-    private function checkProjectMember($projectId)
-    {
-        $userId = \Authorizer::getResourceOwnerId();
-
-        return $this->repository->hasMember($projectId, $userId);
-    }
-
-    private function checkProjectPermissions($projectId){
-        if($this->checkProjectOwner($projectId) or $this->checkProjectMember($projectId)){
-            return true;
-        }
-
-        return false;
+        return ['success' => $this->service->delete($id)];
     }
 }

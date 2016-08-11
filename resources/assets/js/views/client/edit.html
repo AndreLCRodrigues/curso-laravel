@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Edição de clientes</div>
+                <div class="panel-heading">Edição de cliente</div>
                 <div class="panel-body">
                     <form class="form-horizontal" name="form" role="form" method="POST" ng-submit="save()">
                         <div class="form-group" ng-class="{'has-error': !form.name.$valid && form.name.$touched}">
@@ -54,13 +54,13 @@
                         <div class="form-group" ng-class="{'has-error': !form.obs.$valid && form.obs.$touched}">
                             <label class="col-md-4 control-label">Obs</label>
                             <div class="col-md-6">
-                                <textarea name="obs" ng-model="client.obs"></textarea>
+                                <textarea class="form-control" name="obs" ng-model="client.obs"></textarea>
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <div class="col-md-6 col-md-offset-4">
-                                <button type="submit" class="btn btn-primary">Save</button>
+                                <a href="#/clients" class="btn btn-danger">Cancel</a> <button type="submit" class="btn btn-primary">Save</button>
                             </div>
                         </div>
                     </form>

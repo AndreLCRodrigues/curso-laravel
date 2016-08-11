@@ -20,6 +20,15 @@ $factory->define(CodeProject\Entities\User::class, function (Faker\Generator $fa
     ];
 });
 
+
+$factory->define(CodeProject\Entities\OAuthClient::class, function (Faker\Generator $faker) {
+    return [
+        'id' => $faker->word,
+        'secret' =>  $faker->word,
+        'name' =>  $faker->word
+    ];
+});
+
 $factory->define(CodeProject\Entities\Client::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
@@ -48,5 +57,12 @@ $factory->define(CodeProject\Entities\ProjectNote::class, function (Faker\Genera
         'project_id' => rand(1,10),
         'title' => $faker->word,
         'note' => $faker->paragraph
+    ];
+});
+
+$factory->define(CodeProject\Entities\ProjectTask::class, function (Faker\Generator $faker) {
+    return [
+        'project_id' => rand(1,10),
+        'name' => $faker->word
     ];
 });

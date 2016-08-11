@@ -2,7 +2,10 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div class="panel panel-default">
-                <div class="panel-heading">Listagem de Clientes</div>
+                <div class="panel-heading">
+                    Listagem de Clientes
+                    <a class="btn btn-primary pull-right" href="#/clients/new"><i class="fa fa fa-plus"></i></a>
+                </div>
                 <div class="panel-body">
                     <table class="table">
                         <thead>
@@ -21,8 +24,8 @@
                                 <td>{{ o.email }}</td>
                                 <td>{{ o.phone }}</td>
                                 <td>
-                                    <a ng-href="#/clients/{{ o.id }}/edit">[Editar]</a>
-                                    <a ng-href="#/clients/{{ o.id }}/remove">[Excluir]</a>
+                                    <a class="btn btn-info" ng-href="#/clients/{{ o.id }}/edit"><i class="fa fa-pencil"></i></a>
+                                    <a class="btn btn-danger" ng-href="#/clients/{{ o.id }}/remove"><i class="fa fa-remove"></i></a>
                                 </td>
                             </tr>
                         </tbody>

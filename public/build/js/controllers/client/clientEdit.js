@@ -10,7 +10,7 @@ angular.module('app.controllers')
             $routeParams,
             Client
         ){
-            $scope.client =  Client.get({id: $routeParams.id});
+            $scope.client = Client.get({id: $routeParams.id});
 
             $scope.save = function(){
                 if($scope.form.$valid){
@@ -20,4 +20,4 @@ angular.module('app.controllers')
                 }
             };
         }
-    ])
+    ]);

@@ -10,6 +10,7 @@ namespace CodeProject\Services;
 
 
 use CodeProject\Repositories\ProjectNoteRepository;
+use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Validators\ProjectNoteValidator;
 use Prettus\Validator\Exceptions\ValidatorException;
 
@@ -24,8 +25,9 @@ class ProjectNoteService
      */
     protected $validator;
 
-    public function __construct(ProjectNoteRepository $repository, ProjectNoteValidator $validator){
+    public function __construct(ProjectNoteRepository $repository, ProjectRepository $projectRepository, ProjectNoteValidator $validator){
         $this->repository = $repository;
+        $this->projectRepository = $projectRepository;
         $this->validator = $validator;
     }
 

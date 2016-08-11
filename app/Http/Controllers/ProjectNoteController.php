@@ -26,16 +26,19 @@ class ProjectNoteController extends Controller
     {
         $this->repository = $repository;
         $this->service = $service;
+
+        $this->middleware('check-project-permission');
     }
 
     /**
      * Display a listing of the resource.
      *
+     * @param $projectId
      * @return \Illuminate\Http\Response
      */
-    public function index($id)
+    public function index($projectId)
     {
-        return $this->repository->findWhere(['project_id' => $id]);
+        return $this->repository->findWhere(['project_id' => $projectId]);
     }
 
     /**
@@ -44,42 +47,53 @@ class ProjectNoteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $projectId)
     {
-        return $this->service->create($request->all());
+        $data = $request->all();
+        $data['project_id'] = $projectId;
+        return $this->service->create($data);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param $projectId
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id, $note_id)
+    public function show($projectId, $id)
     {
-        return $this->repository->findWhere(['project_id' => $id, 'id' => $note_id]);
+        $result = $this->repository->findWhere(['project_id' => $projectId, 'id' => $id]);
+
+        if(isset($result['data']) and count($result['data']) == 1){
+            $result['data'] = $result['data'][0];
+        }
+
+        return $result;
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request $request
+     * @param $projectId
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id, $noteId)
+    public function update(Request $request, $projectId, $id)
     {
-        return $this->service->update($request->all(), $noteId);
+        return $this->service->update($request->all(), $id);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param $projectId
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id, $noteId)
+    public function destroy($projectId, $id)
     {
-        return $this->repository->delete($noteId);
+       return ['success' => $this->repository->delete($id)];
     }
 }

@@ -1,0 +1,53 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Listagem de Tarefas de Projeto
+                    <a class="btn btn-primary pull-right" href="#/projects/{{ projectId }}/members/new"><i class="fa fa fa-plus"></i></a>
+                    <div class="col-md-8 pull-right">
+                        <form class="form-inline" name="form" role="form" method="POST" ng-submit="save()">
+                            <div class="form-group" ng-class="{'has-error': !form.user_id.$valid && form.user_id.$touched}">
+                                <label class="col-md-4 control-label">User</label>
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" name="user_id"
+                                           ng-model="userSelected"
+                                           typeahead="o as o.name for o in getUsers($viewValue)|limitTo:10"
+                                           typeahead-input-formatter="formatName($model)"
+                                           typeahead-on-select="selectUser($item)"
+                                           typeahead-editable="false"
+                                           required
+                                    >
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-6 col-md-offset-4">
+                                    <button type="submit" class="btn btn-primary">Salvar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="o in projectMembers">
+                                <td>{{ o.user.data.name }}</td>
+                                <td>
+                                    <a class="btn btn-danger" ng-href="#/projects/{{ o.project_id }}/members/{{ o.id }}/remove"><i class="fa fa-remove"></i></a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

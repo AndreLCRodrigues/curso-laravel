@@ -1,0 +1,22 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Exclusão de arquivo</div>
+                <div class="panel-body">
+                    <p>Deseja excluir esta nota?</p>
+                    <ul>
+                        <li><strong>Name:</strong> {{ projectFile.name }}</li>
+                        <li><strong>Extension:</strong> {{ projectFile.extension }}</li>
+                        <li><strong>Description:</strong> {{ projectFile.description }}</li>
+                    </ul>
+                    <div class="form-group">
+                        <div class="col-md-6 col-md-offset-4">
+                            <a href="#/projects/{{ projectFile.project_id }}/files" class="btn btn-info">Cancel</a> <button type="button" class="btn btn-danger" ng-click="remove()">Excluir</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
